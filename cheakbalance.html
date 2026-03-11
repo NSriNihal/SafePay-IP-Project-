@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Balance</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="page-header">
+        <h1 class="brand">SafePay</h1>
+        <nav class="top-nav">
+            <a href="home.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="profile.html">Profile</a>
+            <a href="contact.html">Contact</a>
+            <span class="nav-spacer"></span>
+            <a href="login.html">Logout</a>
+        </nav>
+    </header>
+
+    <main class="page-content">
+        <form id="balanceForm" class="stack balance-check-form" style="text-align: center;">
+            <h1>Check Balance</h1>
+            
+            <div>
+                <label for="balance-password">Password</label>
+                <input id="balance-password" type="password" placeholder="Enter your password" required>
+            </div><br>
+            <input type="submit" value="Check Balance"><br>
+        </form>
+    </main>
+    <script src="app.js"></script>
+    <script>
+        if (SafePay.requireAuth()) {
+            document.getElementById("balanceForm").addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                const user = SafePay.getCurrentUser();
+                const password = document.getElementById("balance-password").value;
+
+                if (!user || user.password !== password) {
+                    alert("Incorrect password");
+                    return;
+                }
+
+                SafePay.grantBalanceAccess();
+                window.location.href = "balance.html";
+            });
+        }
+    </script>
+</body>
+</html>

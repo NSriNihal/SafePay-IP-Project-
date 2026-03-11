@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="page-header">
+        <h1 class="brand">SafePay</h1>
+        <nav class="top-nav">
+            <a href="home.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="profile.html">Profile</a>
+            <a href="contact.html">Contact</a>
+            <span class="nav-spacer"></span>
+            <a href="login.html">Logout</a>
+        </nav>
+    </header>
+
+    <main class="page-content">
+        <section class="profile-section">
+            <h1>User Profile</h1>
+            <form id="profileForm" class="stack">
+                <h2>Personal Details</h2>
+                <div>
+                    <label for="full-name">Full Name</label>
+                    <input id="full-name" type="text">
+                </div>
+                <div>
+                    <label for="email-address">Email ID</label>
+                    <input id="email-address" type="email" readonly>
+                </div>
+                <div>
+                    <label for="mobile-number">Mobile Number</label>
+                    <input id="mobile-number" type="tel">
+                </div>
+                <div>
+                    <span><strong>Gender</strong></span>
+                    <div class="inline-options">
+                        <label><input type="radio" name="gender" value="Male"> Male</label>
+                        <label><input type="radio" name="gender" value="Female"> Female</label>
+                        <label><input type="radio" name="gender" value="Others"> Others</label>
+                    </div>
+                </div>
+                <div>
+                    <label for="dob">Date of Birth</label>
+                    <input id="dob" type="date">
+                </div>
+            </form>
+        </section>
+
+        <section class="profile-section">
+            <form id="accountForm" class="stack">
+                <h2>Account Details</h2>
+                <div>
+                    <label for="account-number">Account Number</label>
+                    <input id="account-number" type="text" readonly>
+                </div>
+                <div>
+                    <label for="account-type">Account Type</label>
+                    <input id="account-type" type="text">
+                </div>
+                <div>
+                    <label for="bank-name">Bank Name</label>
+                    <input id="bank-name" type="text">
+                </div>
+                <div>
+                    <label for="available-balance">Available Balance</label>
+                    <input id="available-balance" type="text" readonly>
+                </div>
+                <input type="submit" value="Update Profile">
+                <input id="delete-account" type="button" value="Delete Account">
+            </form>
+        </section>
+    </main>
+    <script src="app.js"></script>
+    <script>
+        if (SafePay.requireAuth()) {
+            const user = SafePay.getCurrentUser();
+
+            document.getElementById("full-name").value = user.profile.fullName;
+            document.getElementById("email-address").value = user.email;
+            document.getElementById("mobile-number").value = user.profile.mobile;
+            document.getElementById("dob").value = user.profile.dob;
+            document.getElementById("account-number").value = user.profile.accountNumber;
+            document.getElementById("account-type").value = user.profile.accountType;
+            document.getElementById("bank-name").value = user.profile.bankName;
+            document.getElementById("available-balance").value = SafePay.formatCurrency(user.balance);
+
+            const genderInput = document.querySelector('input[name="gender"][value="' + user.profile.gender + '"]');
+            if (genderInput) {
+                genderInput.checked = true;
+            }
+
+            document.getElementById("accountForm").addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                const selectedGender = document.querySelector('input[name="gender"]:checked');
+                const updatedUser = SafePay.updateCurrentUser(function (current) {
+                    return {
+                        ...current,
+                        profile: {
+                            ...current.profile,
+                            fullName: document.getElementById("full-name").value.trim(),
+                            mobile: document.getElementById("mobile-number").value.trim(),
+                            gender: selectedGender ? selectedGender.value : current.profile.gender,
+                            dob: document.getElementById("dob").value,
+                            accountType: document.getElementById("account-type").value.trim(),
+                            bankName: document.getElementById("bank-name").value.trim()
+                        }
+                    };
+                });
+
+                document.getElementById("available-balance").value = SafePay.formatCurrency(updatedUser.balance);
+                alert("Profile updated successfully");
+            });
+
+            document.getElementById("delete-account").addEventListener("click", function () {
+                const confirmed = window.confirm("Delete this account permanently?");
+                if (!confirmed) {
+                    return;
+                }
+
+                const result = SafePay.deleteCurrentUser();
+                if (!result.ok) {
+                    alert(result.message);
+                    return;
+                }
+
+                alert("Account deleted successfully");
+                window.location.href = "login.html";
+            });
+        }
+    </script>
+</body>
+</html>

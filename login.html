@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafePay Login</title>
+    <link rel="stylesheet" href="style.css">
+   
+</head>
+<body class="auth-page">
+    <main>
+        <h1 class="brand">SafePay</h1>
+        <form id="loginForm" class="stack"  style="text-align: center;">
+            <h2>Login</h2>
+            
+            <div>
+                
+                <input id="email" type="email" placeholder="example@gmail.com" required>
+            </div><br>
+            <div>
+               
+                <input id="password" type="password" placeholder="Enter your password" required>
+            </div><br>
+            <input type="submit" value="Login"><br>
+        </form>
+        <form id="signupForm" class="stack" style="text-align: center;">
+            <h2>Create Account</h2>
+           
+            <div>
+               
+                <input id="signup-name" type="text" placeholder="Enter your full name" required>
+            </div><br>
+            <div>
+                
+                <input id="signup-email" type="email" placeholder="example@gmail.com" required>
+            </div><br>
+            <div>
+               
+                <input id="signup-mobile" type="tel" placeholder="Enter mobile number" required>
+            </div><br>
+            <div>
+               
+                <input id="signup-password" type="password" placeholder="Create a password" required>
+            </div><br>
+            <div>
+               
+                <input id="signup-pin" type="password" placeholder="Create transaction PIN" maxlength="6" required>
+            </div><br>
+            <input type="submit" value="Create Account"><br>
+        </form>
+    </main>
+    <script src="app.js"></script>
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value;
+            const user = SafePay.findUserByEmail(email);
+
+            if (!user || user.password !== password) {
+                alert("Invalid email or password");
+                return;
+            }
+
+            SafePay.clearPendingTransaction();
+            SafePay.clearOtpSession();
+            SafePay.setCurrentUserEmail(user.email);
+            window.location.href = "home.html";
+        });
+
+        document.getElementById("signupForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const fullName = document.getElementById("signup-name").value.trim();
+            const email = document.getElementById("signup-email").value.trim();
+            const mobile = document.getElementById("signup-mobile").value.trim();
+            const password = document.getElementById("signup-password").value;
+            const pin = document.getElementById("signup-pin").value.trim();
+
+            if (!fullName || !email || !mobile || !password || !pin) {
+                alert("Fill all fields correctly");
+                return;
+            }
+
+            if (!/^\d{10}$/.test(mobile)) {
+                alert("Enter a valid 10-digit mobile number");
+                return;
+            }
+
+            if (password.length < 6) {
+                alert("Password must be at least 6 characters");
+                return;
+            }
+
+            if (!/^\d{6}$/.test(pin)) {
+                alert("PIN must be 6 digits");
+                return;
+            }
+
+            const result = SafePay.createUser({
+                fullName: fullName,
+                email: email,
+                mobile: mobile,
+                password: password,
+                pin: pin
+            });
+
+            if (!result.ok) {
+                alert(result.message);
+                return;
+            }
+
+            alert("Account created. Your account number is " + result.user.profile.accountNumber);
+            document.getElementById("signupForm").reset();
+            document.getElementById("email").value = result.user.email;
+            document.getElementById("password").value = password;
+        });
+    </script>
+</body>
+</html>

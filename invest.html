@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invest Funds</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="page-header">
+        <h1 class="brand">SafePay</h1>
+        <nav class="top-nav">
+            <a href="home.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="profile.html">Profile</a>
+            <a href="contact.html">Contact</a>
+            <span class="nav-spacer"></span>
+            <a href="login.html">Logout</a>
+        </nav>
+    </header>
+
+    <main class="page-content">
+        <section class="hero">
+            <h1>Choose a Platform to Invest</h1>
+            <p>SafePay does not process investments directly. These links take you to external platforms.</p>
+        </section>
+
+        <section class="feature-grid">
+            <article class="box">
+                <a href="https://groww.in/" target="_blank" rel="noopener noreferrer">
+                    <h2>Groww</h2>
+                    <p>Explore mutual funds, stocks, and related investment products.</p>
+                </a>
+            </article>
+
+            <article class="box">
+                <a href="https://zerodha.com/" target="_blank" rel="noopener noreferrer">
+                    <h2>Zerodha</h2>
+                    <p>Open the Zerodha platform for market access and trading tools.</p>
+                </a>
+            </article>
+        </section>
+
+        <p class="muted">Disclaimer: SafePay and the above investment platforms operate independently. Use those services according to their own terms and policies.</p>
+    </main>
+    <script src="app.js"></script>
+    <script>
+        SafePay.requireAuth();
+    </script>
+</body>
+</html>

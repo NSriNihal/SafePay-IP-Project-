@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transfer Successful</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+     <header class="page-header">
+        <h1 class="brand">SafePay</h1>
+        <nav class="top-nav">
+            <a href="home.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="profile.html">Profile</a>
+            <a href="contact.html">Contact</a>
+            <span class="nav-spacer"></span>
+            <a href="login.html">Logout</a>
+        </nav>
+    </header>
+
+    <main class="page-content">
+        <section class="card receipt">
+            <h1>Transfer Successful</h1>
+            <p class="muted">Your payment has been processed successfully.</p>
+            <h2>Transaction Receipt</h2>
+            <p><strong>Transaction ID:</strong> <span id="receipt-id"></span></p>
+            <p><strong>Date:</strong> <span id="receipt-date"></span></p>
+            <p><strong>Status:</strong> <span id="receipt-status"></span></p>
+            <p><strong>Sender Name:</strong> <span id="sender-name"></span></p>
+            <p><strong>Receiver Name:</strong> <span id="receiver-name"></span></p>
+            <p><strong>Bank:</strong> <span id="receipt-bank"></span></p>
+            <p><strong>Amount Transferred:</strong> <span id="receipt-amount"></span></p>
+            <p><strong>Transaction Type:</strong> <span id="receipt-type"></span></p>
+            <p><a href="history.html">View transaction history</a></p>
+        </section>
+    </main>
+    <script src="app.js"></script>
+    <script>
+        if (SafePay.requireAuth()) {
+            const receipt = SafePay.getLastReceipt();
+
+            if (!receipt) {
+                window.location.href = "transferfunds.html";
+            } else {
+                document.getElementById("receipt-id").textContent = receipt.id;
+                document.getElementById("receipt-date").textContent = receipt.date;
+                document.getElementById("receipt-status").textContent = receipt.status;
+                document.getElementById("sender-name").textContent = receipt.senderName;
+                document.getElementById("receiver-name").textContent = receipt.receiverName;
+                document.getElementById("receipt-bank").textContent = receipt.bank;
+                document.getElementById("receipt-amount").textContent = SafePay.formatCurrency(receipt.amount);
+                document.getElementById("receipt-type").textContent = receipt.type;
+            }
+        }
+    </script>
+</body>
+</html>

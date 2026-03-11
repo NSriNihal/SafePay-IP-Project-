@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Balance</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="page-header">
+        <h1 class="brand">SafePay</h1>
+        <nav class="top-nav">
+            <a href="home.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="profile.html">Profile</a>
+            <a href="contact.html">Contact</a>
+            <span class="nav-spacer"></span>
+            <a href="login.html">Logout</a>
+        </nav>
+    </header>
+
+    <main class="page-content">
+        <section class="card">
+            <h1>Available Balance</h1>
+            <p class="muted">Your current savings account balance is:</p>
+            <h2 id="balanceAmount"></h2>
+            <p><a href="home.html">Back to dashboard</a></p>
+        </section>
+    </main>
+    <script src="app.js"></script>
+    <script>
+        if (SafePay.requireAuth()) {
+            if (!SafePay.consumeBalanceAccess()) {
+                window.location.href = "cheakbalance.html";
+            } else {
+                const user = SafePay.getCurrentUser();
+                document.getElementById("balanceAmount").textContent = SafePay.formatCurrency(user.balance);
+            }
+        }
+    </script>
+</body>
+</html>

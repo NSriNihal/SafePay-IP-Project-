@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>history</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+       <header class="page-header">
+        <h1 class="brand">SafePay</h1>
+        <nav class="top-nav">
+            <a href="home.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="profile.html">Profile</a>
+            <a href="contact.html">Contact</a>
+            <span class="nav-spacer"></span>
+            <a href="login.html">Logout</a>
+        </nav>
+    </header>
+
+<h2 class="text-center mt-4">Transaction History</h2>
+
+<table>
+  <tr>
+    <th>Transaction ID</th>
+    <th>Date</th>
+    <th>Transferred To</th>
+    <th>Amount (₹)</th>
+    <th>Status</th>
+  </tr>
+  <tbody id="historyBody"></tbody>
+</table>
+
+<script src="app.js"></script>
+<script>
+if (SafePay.requireAuth()) {
+  const user = SafePay.getCurrentUser();
+  const data = user.transactions || [];
+  const body = document.getElementById("historyBody");
+
+  if (data.length === 0) {
+    body.innerHTML = "<tr><td colspan='5'>No Transactions</td></tr>";
+  }
+
+  data.forEach(function (t) {
+    const direction = t.type === "Credit" ? "From " + t.toName : "To " + t.toName;
+    body.innerHTML += `
+      <tr>
+        <td>${t.id}</td>
+        <td>${t.date}</td>
+        <td>${direction}</td>
+        <td>${t.amount}</td>
+        <td style="color:${t.status === 'Success' ? 'green' : 'red'}">
+          ${t.status}
+        </td>
+      </tr>`;
+  });
+}
+</script>
+
+</body>
+</html>
+
+
+
+

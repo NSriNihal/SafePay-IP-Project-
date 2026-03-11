@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafePay Home</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="page-header">
+        <h1 class="brand">SafePay</h1>
+        <nav class="top-nav">
+            <a href="home.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="profile.html">Profile</a>
+            <a href="contact.html">Contact</a>
+            <span class="nav-spacer"></span>
+            <a href="login.html">Logout</a>
+        </nav>
+    </header>
+
+    <main class="page-content">
+        
+
+        <section class="feature-grid">
+            <article class="box">
+                <a href="transferfunds.html">
+                    <h2>Secure Fund Transfer</h2>
+                </a>
+            </article>
+
+            <article class="box">
+                <a href="cheakbalance.html">
+                    <h2>Check Balance</h2>
+                </a>
+            </article>
+
+            <article class="box">
+                <a href="invest.html">
+                    <h2>Invest Funds</h2>
+
+                </a>
+            </article>
+
+            <article class="box">
+                <a href="history.html">
+                    <h2>Transaction History</h2>
+                </a>
+            </article>
+        </section>
+    </main>
+    <script src="app.js"></script>
+    <script>
+        SafePay.requireAuth();
+    </script>
+</body>
+</html>
