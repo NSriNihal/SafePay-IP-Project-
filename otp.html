@@ -22,22 +22,33 @@
   <button onclick="verifyOTP()">Verify OTP</button>
 
   <p id="msg"></p>
+  <p id="otpHint"></p>
 
   <script src="app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
   <script>
     if (SafePay.requireAuth()) {
       const pending = SafePay.getPendingTransaction();
       const currentUser = SafePay.getCurrentUser();
+      const msgEl = document.getElementById("msg");
+      const otpHintEl = document.getElementById("otpHint");
+      const emailInput = document.getElementById("email");
 
       if (!pending || !currentUser) {
         alert("No pending transaction found");
         window.location.href = "transferfunds.html";
       } else {
-        document.getElementById("email").value = currentUser.email;
+        emailInput.value = currentUser.email;
+      }
+
+      try {
+        emailjs.init("IWjGikVFkGUpfLZ8b");
+      } catch (error) {
+        console.error("EmailJS init failed:", error);
       }
 
       window.sendOTP = function () {
-        const userEmail = document.getElementById("email").value.trim();
+        const userEmail = emailInput.value.trim();
 
         if (!userEmail) {
           alert("Please enter email");
@@ -50,14 +61,40 @@
         }
 
         const generatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+        const expiresAt = Date.now() + 5 * 60000;
+        const expiryTime = new Date(expiresAt).toLocaleTimeString();
+
         SafePay.setOtpSession({
           code: generatedOTP,
           email: userEmail,
-          expiresAt: Date.now() + 5 * 60000
+          expiresAt: expiresAt
         });
 
+        msgEl.innerText = "OTP generated. Check your email. If email delivery fails, use the demo OTP below.";
+        otpHintEl.innerText = "Demo OTP: " + generatedOTP;
         console.log("SafePay OTP:", generatedOTP);
-        alert("OTP sent successfully");
+
+        if (!globalThis.emailjs) {
+          alert("Email service unavailable. Use the demo OTP shown on the page.");
+          return;
+        }
+
+        emailjs.send(
+          "service_965lcnh",
+          "template_yenzvom",
+          {
+            email: userEmail,
+            passcode: generatedOTP,
+            time: expiryTime
+          }
+        )
+        .then(function () {
+          alert("OTP sent to your email");
+        })
+        .catch(function (error) {
+          alert("Email delivery failed. Use the demo OTP shown on the page.");
+          console.error("EmailJS send failed:", error);
+        });
       };
 
       window.verifyOTP = function () {
@@ -70,29 +107,31 @@
         }
 
         if (!otpSession) {
-          document.getElementById("msg").innerText = "OTP not sent";
+          msgEl.innerText = "OTP not sent";
           return;
         }
 
         if (Date.now() > otpSession.expiresAt) {
           SafePay.clearOtpSession();
           SafePay.clearPendingTransaction();
-          document.getElementById("msg").innerText = "OTP expired. Transaction aborted.";
+          msgEl.innerText = "OTP expired. Transaction aborted.";
+          otpHintEl.innerText = "";
           return;
         }
 
         if (enteredOTP !== otpSession.code) {
-          document.getElementById("msg").innerText = "Invalid OTP";
+          msgEl.innerText = "Invalid OTP";
           return;
         }
 
         const result = SafePay.commitPendingTransaction();
         if (!result.ok) {
-          document.getElementById("msg").innerText = result.message;
+          msgEl.innerText = result.message;
           return;
         }
 
-        document.getElementById("msg").innerText = "OTP verified successfully";
+        msgEl.innerText = "OTP verified successfully";
+        otpHintEl.innerText = "";
         window.location.href = "sucesses.html";
       };
     }
